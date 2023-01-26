@@ -321,7 +321,7 @@ const receive = async (msg) => {
     let headers = JSON.stringify({'User-Agent': useragent});
     for (let upload of msg.extra.uploads) {
         winston.debug(`[QQ.js] <QQ sender> upload: ${JSON.stringify(upload)}`)
-        url = upload.url
+        let url = upload.url
         if (upload.original_uri && 
             ['http:', 'file:', 'https:'].includes(
                 new URL(upload.original_uri).protocol)) {
