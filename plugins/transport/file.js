@@ -57,6 +57,17 @@ const convertFileType = (type) => {
     }
 };
 
+const originalFileURI = (file) => {
+    if (file.url) {
+        return file.url;
+    } else if (file.path) {
+        if (servemedia.qq_prefix && path.startsWith("data/"))
+            return 'file://' + servemedia.qq_prefix + file.path;
+        return file.path;
+    }
+    return null;
+};
+
 /**
  * 下载/获取文件内容，对文件进行格式转换（如果需要的话），然后管道出去
  * @param {*} file 
@@ -360,7 +371,8 @@ const uploadFile = async (file) => {
     if (url) {
         return {
             type: fileType,
-            url: url
+            url: url,
+            original_uri: originalFileURI(file)
         };
     } else {
         return null;

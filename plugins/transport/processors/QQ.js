@@ -321,14 +321,20 @@ const receive = async (msg) => {
     let headers = JSON.stringify({'User-Agent': useragent});
     for (let upload of msg.extra.uploads) {
         winston.debug(`[QQ.js] <QQ sender> upload: ${JSON.stringify(upload)}`)
+        url = upload.url
+        if (upload.original_uri && 
+            ['http:', 'file:', 'https:'].includes(
+                new URL(upload.original_uri).protocol)) {
+            url = upload.original_uri
+        }
         if (upload.type === 'audio') {
-            output += '\n' + `[CQ:record,file=${upload.url},headers=${headers}]`;
+            output += '\n' + `[CQ:record,file=${url},headers=${headers}]`;
         } else if (upload.type === 'image') {
-            output += '\n' + `[CQ:image,file=${upload.url},headers=${headers}]`;
+            output += '\n' + `[CQ:image,file=${url},headers=${headers}]`;
         } else if (upload.type === 'video') {
-            output += '\n' + `[CQ:video,file=${upload.url},headers=${headers}]`;
+            output += '\n' + `[CQ:video,file=${url},headers=${headers}]`;
         } else {
-            output += '\n' + upload.url;
+            output += '\n' + url;
         }
     }
 
