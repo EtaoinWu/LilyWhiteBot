@@ -25,6 +25,11 @@ let groupInfo = new LRU({
     maxAge: 3600000,
 });
 
+const timeout = (ms) =>
+  new Promise(resolve => {
+    setTimeout(resolve, ms)
+  })
+
 let bridge = null;
 let config = null;
 let qqHandler = null;
@@ -325,6 +330,8 @@ const receive = async (msg) => {
             output += '\n' + upload.url;
         }
     }
+
+    await timeout(1000)
 
     await qqHandler.say(msg.to, output, {
         noEscape: true
