@@ -47,7 +47,7 @@ const generateFileNameWithExt = (url, name, ext) => {
         extName = '.png';
     }
     if (ext) {
-        extName = '.' + ext;
+        extName = extName + '.' + ext;
     }
     return crypto.createHash('md5').update(name || (Math.random()).toString()).digest('hex') + extName;
 };
