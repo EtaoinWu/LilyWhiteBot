@@ -340,8 +340,7 @@ const receive = async (msg) => {
             output += '\n' + upload.url;
         }
     }
-
-    await timeout(1000)
+//    await timeout(1000)
 
     await qqHandler.say(msg.to, output, {
         noEscape: true
