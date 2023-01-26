@@ -401,6 +401,11 @@ const uploadFile = async (file) => {
             url = file.url;
             break;
 
+        case 'buffer':
+            // Buffer only
+            url = 'qaq';
+            break;
+
         default:
 
     }
