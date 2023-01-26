@@ -240,8 +240,6 @@ const uploadToHost = (host, file) => new Promise((resolve, reject) => {
                     reject(new Error('Unknown host type'));
             }
 
-            winston.debug(`Uploading ${name} to ${host} with options: ${JSON.stringify(requestOptions)}`);
-
             request.post(requestOptions, (error, response, body) => {
                 winston.debug(`Upload to ${host} return: ${JSON.stringify(body)}`);
                 if (typeof callback === 'function') {
