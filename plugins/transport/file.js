@@ -14,10 +14,12 @@ const request = require('request');
 const sharp = require('sharp');
 const winston = require('winston');
 const fileType = require('file-type');
+const { ImgConverter } = require('../lib/img_converter');
 
 let options = {};
 let servemedia;
 let handlers;
+let imgConverter;
 
 const pkg = require('../../package.json');
 const USERAGENT = `LilyWhiteBot/${pkg.version} (${pkg.repository})`;
@@ -112,6 +114,10 @@ const getFileStream = (file) => {
         // } else {
             fileStream = fileStream.pipe(sharp().png());
         // }
+    }
+    if (file.type === 'sticker' && ['.webm', '.tgs'].includes(path.extname(filePath))) {
+        let newStream = imgConverter.convert(fileStream, path.extname(filePath));
+        fileStream = newStream || fileStream;
     }
     
     // if (file.type === 'record') {
@@ -432,6 +438,7 @@ const fileUploader = {
         options = opt;
         servemedia = options.options.servemedia || {};
         servemedia.cache = servemedia.cache || {};
+        imgConverter = ImgConverter(options.options.imgConverter || {});
     },
     get handlers() { return handlers; },
     set handlers(h) { handlers = h; },
