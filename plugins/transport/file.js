@@ -14,7 +14,7 @@ const request = require('request');
 const sharp = require('sharp');
 const winston = require('winston');
 const fileType = require('file-type');
-const { ImgConverter } = require('../lib/img_converter');
+const ImgConverter = require('../../lib/img_converter');
 
 let options = {};
 let servemedia;
@@ -438,7 +438,7 @@ const fileUploader = {
         options = opt;
         servemedia = options.options.servemedia || {};
         servemedia.cache = servemedia.cache || {};
-        imgConverter = ImgConverter(options.options.imgConverter || {});
+        imgConverter = new ImgConverter(options.options.imgConverter || {});
     },
     get handlers() { return handlers; },
     set handlers(h) { handlers = h; },
