@@ -217,7 +217,7 @@ module.exports = (pluginManager, options) => {
     // command：允許向互聯群中加跨群操作的命令
     // paeeye：不轉發特定開頭的訊息
     // file：處理檔案上傳
-    for (let p of ['command', 'paeeye', 'file']) {
+    for (let p of ['command', 'paeeye', 'file', 'fwdoff']) {
         require(`./transport/${p}.js`)(bridge, options);
     }
 
