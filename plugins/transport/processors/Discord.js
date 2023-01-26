@@ -225,8 +225,8 @@ const receive = async (msg) => {
     }
 
     let output = format(template, meta);
-    let attachFileUrls = (msg.extra.uploads || []).map(u => ` ${u.url}`).join('');
-    discordHandler.say(msg.to, `${output}${attachFileUrls}`);
+    let attachFiles = (msg.extra.uploads || []).map(u => u.buffer.data);
+    discordHandler.say(msg.to, { 'content': output, 'files': attachFiles });
 };
 
 module.exports = {

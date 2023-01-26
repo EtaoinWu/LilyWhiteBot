@@ -209,10 +209,10 @@ const receive = async (msg) => {
 
         for (let upload of msg.extra.uploads) {
             let source = upload.url;
-            let extname = path.extname(source);
+            let extname = path.extname(source || '');
             let buffer = upload.buffer;
             if (buffer) {
-                source = { 'source': buffer.data };
+                source = { 'source': buffer.data, 'filename': buffer.name };
                 extname = path.extname(buffer.name);
             }
             if (upload.type === 'audio') {
