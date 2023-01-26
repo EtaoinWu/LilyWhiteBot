@@ -70,7 +70,11 @@ const getFileStream = (file) => {
     if (file.url) {
         fileStream = request.get(file.url);
     } else if (file.path) {
-        fileStream = fs.createReadStream(file.path);
+        let path = file.path;
+        if (servemedia.qq_prefix && path.startsWith("data/")) {
+            path = servemedia.qq_prefix + path;
+        }
+        fileStream = fs.createReadStream(path);
     } else {
         throw new TypeError('unknown file type');
     }
@@ -216,11 +220,30 @@ const uploadToHost = (host, file) => new Promise((resolve, reject) => {
                     };
                     break;
                     
+
+                case 'chevereto':
+                    requestOptions.url = servemedia.chevereto.apiUrl;
+                    requestOptions.formData = {
+                        source: {
+                            value: pendingFile,
+                            options: {
+                                filename: name,
+                            }
+                        },
+                        key: servemedia.chevereto.key,
+                        expiration: servemedia.chevereto.expiration,
+                        format: 'json'
+                    };
+                    break;
+
                 default:
                     reject(new Error('Unknown host type'));
             }
 
+            winston.debug(`Uploading ${name} to ${host} with options: ${JSON.stringify(requestOptions)}`);
+
             request.post(requestOptions, (error, response, body) => {
+                winston.debug(`Upload to ${host} return: ${JSON.stringify(body)}`);
                 if (typeof callback === 'function') {
                     callback();
                 }
@@ -246,7 +269,15 @@ const uploadToHost = (host, file) => new Promise((resolve, reject) => {
                             if (body && !body.success) {
                                 reject(new Error(`Imgur return: ${body.data.error}`));
                             } else {
+                                winston.debug(`Imgur return: ${JSON.stringify(body)}`);
                                 resolve(body.data.link);
+                            }
+                            break;
+                        case 'chevereto':
+                            if (body && body.status_code !== 200) {
+                                reject(new Error(`Chevereto return: ${body.message}`));
+                            } else {
+                                resolve(body.image.url);
                             }
                             break;
                         case 'lsky':
@@ -299,6 +330,7 @@ const uploadFile = async (file) => {
         case 'uguu':
         case 'Uguu':
         case 'lsky':
+        case 'chevereto':
             url = await uploadToHost(servemedia.type, file);
             break;
 
@@ -359,6 +391,7 @@ const fileUploader = {
                 if (servemedia.sizeLimit && servemedia.sizeLimit > 0 && file.size && file.size > servemedia.sizeLimit*1024) {
                     winston.debug(`[file.js] <FileUploader> #${context.msgId} File ${index+1}/${fileCount}: Size limit exceeded. Ignore.`);
                 } else {
+                    winston.debug(`[file.js] <FileUploader> #${context.msgId} File ${index+1}/${fileCount}: Uploading...`);
                     promises.push(uploadFile(file));
                 }
             }

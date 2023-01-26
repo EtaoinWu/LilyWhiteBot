@@ -8,12 +8,22 @@
 const winston = require('winston');
 const BridgeMsg = require('./transport/BridgeMsg.js');
 
-const eightballs = ['As I see it, yes', 'It is certain', 'It is decidedly so', 'Most likely',
-    'Outlook good', 'Signs point to yes', 'One would be wise to think so', 'Naturally', 'Without a doubt',
-    'Yes', 'Yes, definitely', 'You may rely on it', 'Reply hazy, try again', 'Ask again later',
-    'Better not tell you now', 'Cannot predict now', 'Concentrate and ask again',
-    'You know the answer better than I', 'Maybe...', 'You\'re kidding, right?', 'Don\'t count on it',
-    'In your dreams', 'My reply is no', 'My sources say no', 'Outlook not so good', 'Very doubtful'];
+const eightballs = [
+"对三，要不起。",
+"躺平！",
+"差不多得了！",
+"谁说你不会乐器，你退堂鼓打的可好了！",
+"That's the gayest shit I've ever seen.",
+"You don't have a nightmare if you never dream.",
+"就这？",
+"就这？就这？就这？",
+"清华大学是世界一流大学。",
+"😅",
+"你在教我做事？",
+"https://www.youtube.com/watch?v=mW61VTLhNjQ",
+"多少沾点😅",
+"不会吧不会吧？",
+];
 
 module.exports = (pluginManager, options) => {
     const bridge = pluginManager.plugins.transport;
