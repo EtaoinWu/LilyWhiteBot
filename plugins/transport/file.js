@@ -38,6 +38,20 @@ const generateFileName = (url, name) => {
     return crypto.createHash('md5').update(name || (Math.random()).toString()).digest('hex') + extName;
 };
 
+const generateFileNameWithExt = (url, name, ext) => {
+    let extName = path.extname(name || '');
+    if (extName === '') {
+        extName = path.extname(url || '');
+    }
+    if (extName === '.webp') {
+        extName = '.png';
+    }
+    if (extName === '') {
+        extName = '.' + (ext || '');
+    }
+    return crypto.createHash('md5').update(name || (Math.random()).toString()).digest('hex') + extName;
+};
+
 /**
  * 将各聊天软件的媒体类型转成标准类型
  * @param {string} type 各Handler提供的文件类型
@@ -113,6 +127,28 @@ const pipeFileStream = (file, pipe) => new Promise((resolve, reject) => {
     fileStream.on('error', e => reject(e))
         .on('end', () => resolve())
         .pipe(pipe);
+});
+
+const uploadToBuffer = (file) => new Promise((resolve, reject) => {
+    let buf = []
+
+    let pendingFileStream = getFileStream(file);
+
+    pendingFileStream.on('error', (e) => {
+        reject(e);
+    });
+
+    pendingFileStream.on('data', (chunk) => {
+        buf.push(chunk);
+    });
+
+    pendingFileStream.on('end', () => {
+        let buffer = Buffer.concat(buf);
+        let type = fileType(buffer);
+        let name = generateFileNameWithExt(file.url || file.path, file.id, type.ext);
+        // servemedia.cache[name] = buffer;
+        resolve({'name': name, 'type': type.mime, 'data': buffer});
+    });
 });
 
 /*
@@ -332,6 +368,7 @@ const uploadToLinx = (file) => new Promise((resolve, reject) => {
 const uploadFile = async (file) => {
     let url;
     let fileType = convertFileType(file.type);
+    let result = {};
 
     switch (servemedia.type) {
         case 'vimcn':
@@ -369,14 +406,17 @@ const uploadFile = async (file) => {
     }
 
     if (url) {
-        return {
-            type: fileType,
-            url: url,
-            original_uri: originalFileURI(file)
-        };
-    } else {
-        return null;
+        // return {
+        //     type: fileType,
+        //     url: url,
+        //     original_uri: originalFileURI(file)
+        // };
+        result.type = fileType;
+        result.url = url;
+        result.original_uri = originalFileURI(file);
     }
+    result.buffer = uploadToBuffer(file);
+    return result;
 };
 
 /*
@@ -386,6 +426,7 @@ const fileUploader = {
     init: (opt) => {
         options = opt;
         servemedia = options.options.servemedia || {};
+        servemedia.cache = servemedia.cache || {};
     },
     get handlers() { return handlers; },
     set handlers(h) { handlers = h; },

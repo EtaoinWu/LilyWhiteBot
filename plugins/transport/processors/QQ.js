@@ -30,6 +30,11 @@ const timeout = (ms) =>
     setTimeout(resolve, ms)
   })
 
+const bufferToBase64URI = (buffer) => {
+    let base64 = buffer.data.toString('base64');
+    return `base64://${base64}`;
+}
+
 let bridge = null;
 let config = null;
 let qqHandler = null;
@@ -322,11 +327,9 @@ const receive = async (msg) => {
     for (let upload of msg.extra.uploads) {
         winston.debug(`[QQ.js] <QQ sender> upload: ${JSON.stringify(upload)}`)
         let url = upload.url
-        // if (upload.original_uri && 
-        //     ['http:', 'file:', 'https:'].includes(
-        //         new URL(upload.original_uri).protocol)) {
-        //     url = upload.original_uri
-        // }
+        if (upload.buffer) {
+            url = bufferToBase64URI(upload.buffer)
+        }
         if (upload.type === 'audio') {
             output += '\n' + `[CQ:record,file=${url},headers=${headers}]`;
         } else if (upload.type === 'image') {
@@ -334,7 +337,7 @@ const receive = async (msg) => {
         } else if (upload.type === 'video') {
             output += '\n' + `[CQ:video,file=${url},headers=${headers}]`;
         } else {
-            output += '\n' + url;
+            output += '\n' + upload.url;
         }
     }
 

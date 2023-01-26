@@ -208,16 +208,23 @@ const receive = async (msg) => {
         };
 
         for (let upload of msg.extra.uploads) {
+            let source = upload.url;
+            let extname = path.extname(source);
+            let buffer = upload.buffer;
+            if (buffer) {
+                source = tgHandler._input.fromBuffer(buffer.data, buffer.name);
+                extname = path.extname(buffer.name);
+            }
             if (upload.type === 'audio') {
-                await tgHandler.sendAudio(msg.to, upload.url, replyOption);
+                await tgHandler.sendAudio(msg.to, source, replyOption);
             } else if (upload.type === 'image') {
-                if (path.extname(upload.url) === '.gif') {
-                    await tgHandler.sendAnimation(msg.to, upload.url, replyOption);
+                if (extname === '.gif') {
+                    await tgHandler.sendAnimation(msg.to, source, replyOption);
                 } else {
-                    await tgHandler.sendPhoto(msg.to, upload.url, replyOption);
+                    await tgHandler.sendPhoto(msg.to, source, replyOption);
                 }
             } else {
-                await tgHandler.sendDocument(msg.to, upload.url, replyOption);
+                await tgHandler.sendDocument(msg.to, source, replyOption);
             }
         }
     }
