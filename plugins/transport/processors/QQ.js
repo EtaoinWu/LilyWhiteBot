@@ -315,6 +315,7 @@ const receive = async (msg) => {
     let useragent = config.options.servemedia.userAgent || USERAGENT;
     let headers = JSON.stringify({'User-Agent': useragent});
     for (let upload of msg.extra.uploads) {
+        winston.debug(`[QQ.js] <QQ sender> upload: ${JSON.stringify(upload)}`)
         if (upload.type === 'audio') {
             output += '\n' + `[CQ:record,file=${upload.url},headers=${headers}]`;
         } else if (upload.type === 'image') {
