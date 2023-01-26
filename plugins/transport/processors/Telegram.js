@@ -212,7 +212,7 @@ const receive = async (msg) => {
             let extname = path.extname(source);
             let buffer = upload.buffer;
             if (buffer) {
-                source = tgHandler._input.fromBuffer(buffer.data, buffer.name);
+                source = { 'source': buffer.data };
                 extname = path.extname(buffer.name);
             }
             if (upload.type === 'audio') {

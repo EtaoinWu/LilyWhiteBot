@@ -75,7 +75,7 @@ const originalFileURI = (file) => {
     if (file.url) {
         return file.url;
     } else if (file.path) {
-        if (servemedia.qq_prefix && path.startsWith("data/"))
+        if (servemedia.qq_prefix && file.path.startsWith("data/"))
             return 'file://' + servemedia.qq_prefix + file.path;
         return file.path;
     }
@@ -142,9 +142,9 @@ const uploadToBuffer = (file) => new Promise((resolve, reject) => {
         buf.push(chunk);
     });
 
-    pendingFileStream.on('end', () => {
+    pendingFileStream.on('end', async () => {
         let buffer = Buffer.concat(buf);
-        let type = fileType(buffer);
+        let type = await fileType.fromBuffer(buffer);
         let name = generateFileNameWithExt(file.url || file.path, file.id, type.ext);
         // servemedia.cache[name] = buffer;
         resolve({'name': name, 'type': type.mime, 'data': buffer});
@@ -415,7 +415,7 @@ const uploadFile = async (file) => {
         result.url = url;
         result.original_uri = originalFileURI(file);
     }
-    result.buffer = uploadToBuffer(file);
+    result.buffer = await uploadToBuffer(file);
     return result;
 };
 
