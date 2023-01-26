@@ -46,8 +46,8 @@ const generateFileNameWithExt = (url, name, ext) => {
     if (extName === '.webp') {
         extName = '.png';
     }
-    if (extName === '') {
-        extName = '.' + (ext || '');
+    if (ext) {
+        extName = '.' + ext;
     }
     return crypto.createHash('md5').update(name || (Math.random()).toString()).digest('hex') + extName;
 };

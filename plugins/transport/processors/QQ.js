@@ -325,7 +325,7 @@ const receive = async (msg) => {
     let useragent = config.options.servemedia.userAgent || USERAGENT;
     let headers = JSON.stringify({'User-Agent': useragent});
     for (let upload of msg.extra.uploads) {
-        winston.debug(`[QQ.js] <QQ sender> upload: ${JSON.stringify(upload)}`)
+//        winston.debug(`[QQ.js] <QQ sender> upload: ${JSON.stringify(upload)}`)
         let url = upload.url
         if (upload.buffer) {
             url = bufferToBase64URI(upload.buffer)
