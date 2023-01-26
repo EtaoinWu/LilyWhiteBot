@@ -322,11 +322,11 @@ const receive = async (msg) => {
     for (let upload of msg.extra.uploads) {
         winston.debug(`[QQ.js] <QQ sender> upload: ${JSON.stringify(upload)}`)
         let url = upload.url
-        if (upload.original_uri && 
-            ['http:', 'file:', 'https:'].includes(
-                new URL(upload.original_uri).protocol)) {
-            url = upload.original_uri
-        }
+        // if (upload.original_uri && 
+        //     ['http:', 'file:', 'https:'].includes(
+        //         new URL(upload.original_uri).protocol)) {
+        //     url = upload.original_uri
+        // }
         if (upload.type === 'audio') {
             output += '\n' + `[CQ:record,file=${url},headers=${headers}]`;
         } else if (upload.type === 'image') {
