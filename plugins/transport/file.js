@@ -150,7 +150,7 @@ const uploadToBuffer = (file) => new Promise((resolve, reject) => {
 
     pendingFileStream.on('end', async () => {
         let buffer = Buffer.concat(buf);
-        let type = await fileType.fromBuffer(buffer);
+        let type = (await fileType.fromBuffer(buffer)) || {};
         let name = generateFileNameWithExt(file.url || file.path, file.id, type.ext);
         // servemedia.cache[name] = buffer;
         resolve({'name': name, 'type': type.mime, 'data': buffer});
