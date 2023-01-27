@@ -90,6 +90,7 @@ const init = (b, h, c) => {
 
     options = config.options.QQ || {};
     forwardBots = options.forwardBots || [];
+    forwardBots.push(`${qqHandler.qq}`);
 
     // 消息样式
     let messageStyle = config.options.messageStyle;
