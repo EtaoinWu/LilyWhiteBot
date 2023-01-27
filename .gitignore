@@ -57,3 +57,5 @@ badwords.json
 /data/
 
 qq-bot-translate-*.json
+*.swp
+\#*\#
