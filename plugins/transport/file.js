@@ -107,15 +107,7 @@ const getFileStream = (file) => {
     }
 
     // Telegram默认使用webp格式，转成png格式以便让其他聊天软件的用户查看
-    if ((file.type === 'sticker' || file.type === 'image') && path.extname(filePath) === '.webp') {
-        // if (file.type === 'sticker' && servemedia.stickerMaxWidth !== 0) {
-        //     // 缩小表情包尺寸，因容易刷屏
-        //     fileStream = fileStream.pipe(sharp().resize(servemedia.stickerMaxWidth || 256).png());
-        // } else {
-            fileStream = fileStream.pipe(sharp().png());
-        // }
-    }
-    if (file.type === 'sticker' && ['.webm', '.tgs'].includes(path.extname(filePath))) {
+    if (['sticker', 'image'].includes(file.type) && ['.webm', '.tgs', '.webp'].includes(path.extname(filePath))) {
         let newStream = imgConverter.convert(fileStream, path.extname(filePath));
         fileStream = newStream || fileStream;
     }
