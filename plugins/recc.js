@@ -2,20 +2,14 @@
 
 const winston = require('winston');
 const BridgeMsg = require('./transport/BridgeMsg.js');
-const ytpl = require("ytpl")
-
-const music_urls = {
-    vylet:  "PLXO_EoOinL6EBz6GlH82wWoxGEWwYbc8P",
-    "4efb": "PLu58e_7jZWti07gKCE4fSnNtC5-A1lo22",
-    wuy:    "PLN6Td1o9GnAyIxVQ2iFSUKJr5Y-g1APLI",
-    "p@d":  "UUSJW3EMxeuQXZ00h4bihXvA",
-    caleb:  "PLIDn91pIwQC87p1FAUV-RXbHm-g7sBcSv",
-    celeste:"PLY9u9wC7ApRJk-tG4_pBtH6ubEJ7svnOB"
-}
-
-const help_str = `Music Recommendation. \nUsage: !rec [playlist]. \nPlaylists: ${JSON.stringify(Object.keys(music_urls))}`
+const ytpl = require("ytpl");
 
 module.exports = (pluginManager, options) => {
+    let music_urls = options.playlists;
+    function help_str() {
+        return `Music Recommendation. \nUsage: !rec [playlist]. \nPlaylists: ${JSON.stringify(Object.keys(music_urls))}`
+    }
+
     const bridge = pluginManager.plugins.transport;
     const Broadcast = pluginManager.global.Broadcast;
 
@@ -46,11 +40,11 @@ module.exports = (pluginManager, options) => {
     const recc = async context => {
         const params = context.param.split(" ")
         if(params.length < 1) {
-            return fail(context, help_str)
+            return fail(context, help_str())
         }
         let playlist = params[0]
         if(!music_urls[playlist]) {
-            return fail(context, help_str)
+            return fail(context, help_str())
         }
         let playlist_url = music_urls[playlist]
         let song_urls = await ytpl(playlist_url, {limit: 1000})
