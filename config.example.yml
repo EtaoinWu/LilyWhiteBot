@@ -113,9 +113,13 @@ plugins:
   - qqmultimsg                              # 允許私聊查詢 QQ 的合併轉發消息
   - groupid-tg                              # 取得目前 Telegram 群組的 ID，
                                             # 可在正式連接之前啟用該套件，然後在 Telegram 群中使用 /thisgroupid 取得ID
-  - ircquery                                # 允許查詢 IRC 的一些訊息
-  - irccommand                              # 允許向 IRC 發送一些命令（注意，不是 IRC 命令而是給頻道內機器人使用的命令）
+  # - ircquery                                # 允許查詢 IRC 的一些訊息
+  # - irccommand                              # 允許向 IRC 發送一些命令（注意，不是 IRC 命令而是給頻道內機器人使用的命令）
   - pia
+  # - 8ball
+  # - recc
+  # - gtrans
+  # - wikilinky
 
 # 各插件（套件）设置
 transport:
@@ -224,7 +228,12 @@ transport:
     # 其他设置
     paeeye:                                 # 留空或省略則禁用本功能
       prepend: "//"                         # 在訊息前面使用「//」會阻止此條訊息向其他群組轉發。
-      inline: "--no-relay"                  # 在訊息中間使用「--no-relay」會阻止此條訊息向其他群組轉發。
+      inline: "(NOFWD)"                     # 在訊息中間使用「--no-relay」會阻止此條訊息向其他群組轉發。
+    
+    rpae:
+      prepend: "->"
+      inline: "(YESFWD)"
+      disabled: false
     # 自定义消息样式（使用 https://www.npmjs.com/package/string-format 库实现）
     # 字段一览：
     # 消息信息：from、to、nick、text、client_short、client_full、command、param
@@ -272,7 +281,7 @@ transport:
     # 2. 如使用外部图床，建议您设置自己专用的 User-Agent。
     # 3. 自建服务器请使用 80 或 443 端口（国内服务器需备案），否则图片可能无法正常转发。
     servemedia:
-      type: ""                              # 文件处理方式：省略/留空/none、source、self、vim-cn、imgur、sm.ms、linx、uguu
+      type: ""                              # 文件处理方式：省略/留空/none、buffer（不使用irc时推荐）、source、self、vim-cn、imgur、sm.ms、linx、uguu
 
       # type为self时有效
       cachePath: ""                         # 缓存存放位置
@@ -299,6 +308,12 @@ transport:
       timeout: 3000                         # 上传超时时间，单位毫秒，type 为 vim-cn、imgur 等外部图床时有效
       userAgent: ""                         # 访问外部图床时的 User-Agent，如留空则使用默认的 LilyWhiteBot/版本号
 
+    # 用于转发 tg 的 video、animated sticker，请自行安装相关二进制
+    imgConverter:
+      gifski: "/path/to/gifski" # https://github.com/ImageOptim/gifski
+      tgs2png: "/path/to/tgs_to_png" # https://github.com/ed-asriyan/tgs-to-gif
+      tgs_fps: 12.5
+
 ircquery:
   disables:                                 # 不要在這些群組使用 ircquery 功能
     - "qq/12345678"                         # 軟體名（qq/irc/telegram）要寫全而且小寫……
@@ -320,3 +335,22 @@ irccommand:
   #  - "qq/12345678"
 
   prefix: "irc"                             # 如果使用，命令會變成 /irctopic、/ircnames 等
+
+# 谷歌翻译插件
+# 需在 console.cloud.google.com 建立项目、启用 Cloud Translation API、
+# 获取 API Key 并放在环境变量中
+gtrans:
+  enables:
+    - 'telegram/-100114514'
+    - 'qq/114514'
+
+# 维基百科链接插件
+wikilinky:
+  groups:
+    telegram/-100114514: "https://en.wikipedia.org/wiki/$1"
+    qq/114514: "https://en.wikipedia.org/wiki/$1"
+
+# youtube 播放列表随机推荐插件
+recc:
+  playlists:
+    "rick": "PLlaN88a7y2_q16UdiTcsWnr0gFIcDMhHX"
