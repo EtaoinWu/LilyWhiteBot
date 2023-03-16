@@ -75,6 +75,9 @@ const convertFileType = (type) => {
 
 const originalFileURI = (file) => {
     if (file.url) {
+        if (servemedia.tg_prefix && file.url.startsWith(servemedia.tg_prefix)) {
+            return file.url.replace(servemedia.tg_prefix, 'file://');
+        }
         return file.url;
     } else if (file.path) {
         if (servemedia.qq_prefix && file.path.startsWith("data/"))
@@ -95,7 +98,12 @@ const getFileStream = (file) => {
     let fileStream;
 
     if (file.url) {
-        fileStream = request.get(file.url);
+        if (servemedia.tg_prefix && file.url.startsWith(servemedia.tg_prefix)) {
+            filePath = file.url.replace(servemedia.tg_prefix, '');
+            fileStream = fs.createReadStream(filePath);
+        } else {
+            fileStream = request.get(file.url);
+        }
     } else if (file.path) {
         let path = file.path;
         if (servemedia.qq_prefix && path.startsWith("data/")) {
