@@ -312,6 +312,9 @@ transport:
     imgConverter:
       gifski: "/path/to/gifski" # https://github.com/ImageOptim/gifski
       tgs2png: "/path/to/tgs_to_png" # https://github.com/ed-asriyan/tgs-to-gif
+      ffmpeg: "/path/to/ffmpeg"
+      magick: "/path/to/magick"
+      dwebp: "/path/to/dwebp"
       tgs_fps: 12.5
 
 ircquery:
