@@ -58,6 +58,7 @@ const init = (b, h, c) => {
     // 將訊息加工好並發送給其他群組
     tgHandler.on('text', (context) => {
         let extra = context.extra;
+
         if (context.text.match(/^\/([A-Za-z0-9_@]+)(\s+(.*)|\s*)$/u) && !options.forwardCommands) {
             return;
         }
@@ -172,6 +173,7 @@ const receive = async (msg) => {
         let reply = msg.extra.reply;
         meta.reply_nick = reply.nick;
         meta.reply_user = reply.username || reply.qq;
+        meta.reply_to_id = reply.to_id;
         if (reply.isText) {
             meta.reply_text = truncate(reply.message);
         } else {
@@ -182,7 +184,7 @@ const receive = async (msg) => {
     // 自定义消息样式
     let styleMode = 'simple';
     let messageStyle = config.options.messageStyle;
-    if (/*msg.extra.clients >= 3 && */(msg.extra.clientName.shortname || msg.isNotice)) {
+    if (msg.extra.clients >= 3 && (msg.extra.clientName.shortname || msg.isNotice)) {
         styleMode = 'complex';
     }
 
@@ -195,6 +197,17 @@ const receive = async (msg) => {
         template = messageStyle[styleMode].reply;
     } else {
         template = messageStyle[styleMode].message;
+    }
+
+    // 用 preferred name 代替 nickname
+    let preferredNames = config.options.preferredNames;
+    if (preferredNames[meta.client_full]) {
+        if (preferredNames[meta.client_full][msg._from]) {
+            meta.nick = `<b>${htmlEscape(preferredNames[meta.client_full][msg._from])}</b>`;
+        }
+        if (meta.reply_to_id && preferredNames[meta.client_full][meta.reply_to_id]) {
+            meta.reply_nick = preferredNames[meta.client_full][meta.reply_to_id];
+        }
     }
 
     template = htmlEscape(template);

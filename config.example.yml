@@ -258,6 +258,14 @@ transport:
         action: '* {client_short} - {nick} {text}'
         notice: '< {client_full}: {text} >'
 
+    # 如果用户需要为自己单独指定显示的名称，则在这里定义
+    # 支持 Telegram User ID 和 QQ 号
+    preferredNames:
+      Telegram:
+        1145141919: 'foo'
+      QQ:
+        9191415411: 'bar'
+
     # 本节用于处理图片文件
     #
     # 支持以下几种处理方式：
