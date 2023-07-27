@@ -59,3 +59,5 @@ badwords.json
 qq-bot-translate-*.json
 *.swp
 \#*\#
+
+*_db

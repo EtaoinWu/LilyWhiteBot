@@ -22,6 +22,7 @@
         "irc-upd": "~0.10.0",
         "ishisashiencoding": "^0.4.0",
         "js-yaml": "^3.13.1",
+        "level": "^8.0.0",
         "lru-cache": "^5.1.1",
         "node-cache": "^5.1.2",
         "oicq": "^1.21.3",

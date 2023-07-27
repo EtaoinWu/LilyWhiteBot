@@ -4,6 +4,14 @@ const BridgeMsg = require('../BridgeMsg.js');
 const LRU = require('lru-cache');
 const format = require('string-format');
 const winston = require('winston');
+const { get_name } = require('../../../lib/db.js');
+
+const id_cvt = (s) => {
+    if (s === undefined) return s;
+    if (/^\d+$/.test(s)) return 'q(' + s + ')';
+    else return 'q<' + s + '>';
+}
+const my_get_name = (s) => get_name(id_cvt(s));
 
 const pkg = require('../../../package.json');
 const USERAGENT = `LilyWhiteBot/${pkg.version} (${pkg.repository})`;
@@ -152,7 +160,7 @@ const init = (b, h, c) => {
                 }
             }
 
-            Promise.all(promises).then((infos) => {
+            Promise.all(promises).then(async (infos) => {
                 for (let info of infos) {
                     if (info) {
                         groupInfo.set(`${info.qq||info.user_id}@${context.to}`, info);
@@ -160,12 +168,12 @@ const init = (b, h, c) => {
                         const user = {
                             sender: {
                                 user_id: info.qq||info.user_id,
-                                nickname: info.name||info.nickname,
+                                nickname: await my_get_name(info.qq||info.user_id)||info.name||info.nickname,
                                 card: info.groupCard||info.card
                             }
                         };
-                        const searchReg = new RegExp(`\\[CQ:at,qq=${info.qq}\\]`, 'gu');
-                        const atText = `＠${qqHandler.escape(qqHandler.getNick(user))}`;
+                        const searchReg = new RegExp(`\\[CQ:at,qq=${info.qq}\\]|@${info.qq}`, 'gu');
+			const atText = `＠${qqHandler.escape(qqHandler.getNick(user))}`;
                         context.text = context.text.replace(searchReg, atText);
                     }
                 }
@@ -323,17 +331,6 @@ const receive = async (msg) => {
         template = messageStyle[styleMode].forward;
     } else {
         template = messageStyle[styleMode].message;
-    }
-
-    // 用 preferred name 代替 nickname
-    let preferredNames = config.options.preferredNames;
-    if (preferredNames[meta.client_full]) {
-        if (preferredNames[meta.client_full][msg._from]) {
-            meta.nick = preferredNames[meta.client_full][msg._from];
-        }
-        if (meta.reply_to_id && preferredNames[meta.client_full][meta.reply_to_id]) {
-            meta.reply_nick = preferredNames[meta.client_full][meta.reply_to_id];
-        }
     }
 
     // 处理图片和音频附件

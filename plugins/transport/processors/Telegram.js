@@ -8,7 +8,7 @@ const htmlEscape = (str) => {
     return str.replace(/&/gu, '&amp;').replace(/</gu, '&lt;').replace(/>/gu, '&gt;');
 };
 
-const truncate = (str, maxLen = 10) => {
+const truncate = (str, maxLen = 15) => {
     str = str.replace(/\n/gu, '');
     if (str.length > maxLen) {
         str = str.substring(0, maxLen - 3) + '...';
@@ -179,6 +179,7 @@ const receive = async (msg) => {
         } else {
             meta.reply_text = reply.message;
         }
+        meta.reply_text = htmlEscape(meta.reply_text);
     }
     
     // 自定义消息样式
@@ -197,17 +198,6 @@ const receive = async (msg) => {
         template = messageStyle[styleMode].reply;
     } else {
         template = messageStyle[styleMode].message;
-    }
-
-    // 用 preferred name 代替 nickname
-    let preferredNames = config.options.preferredNames;
-    if (preferredNames[meta.client_full]) {
-        if (preferredNames[meta.client_full][msg._from]) {
-            meta.nick = `<b>${htmlEscape(preferredNames[meta.client_full][msg._from])}</b>`;
-        }
-        if (meta.reply_to_id && preferredNames[meta.client_full][meta.reply_to_id]) {
-            meta.reply_nick = preferredNames[meta.client_full][meta.reply_to_id];
-        }
     }
 
     template = htmlEscape(template);
