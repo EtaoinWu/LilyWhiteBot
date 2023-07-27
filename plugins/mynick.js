@@ -38,8 +38,11 @@ module.exports = (pluginManager, options) => {
 
     const setnick = async context => {
         let id = context.extra.unified_id;
+        let sender = id;
         if (context.extra.reply && context.extra.reply.unified_to_id)
             id = context.extra.reply.unified_to_id;
+        if (sender != id && !options.admin.includes(sender))
+            return reply_text(context, `You (${sender}) cannot change the nickname of ${id}.`);
         let new_nick = context.param || ""
         new_nick = new_nick.trim()
         if (new_nick.length < 2)
