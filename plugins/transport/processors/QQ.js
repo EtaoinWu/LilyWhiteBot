@@ -115,6 +115,9 @@ const init = (b, h, c) => {
         // }
 
         let extra = context.extra;
+        if (extra.reply) {
+            extra.reply.to_id = extra.reply.qq;
+        }
 
         // 檢查是不是在回覆自己
         if (extra.reply && forwardBots.includes(`${extra.reply.qq}`)) {
@@ -290,6 +293,7 @@ const receive = async (msg) => {
         let reply = msg.extra.reply;
         meta.reply_nick = reply.nick;
         meta.reply_user = reply.username;
+        meta.reply_to_id = reply.to_id;
         if (reply.isText) {
             meta.reply_text = truncate(reply.message);
         } else {
@@ -319,6 +323,17 @@ const receive = async (msg) => {
         template = messageStyle[styleMode].forward;
     } else {
         template = messageStyle[styleMode].message;
+    }
+
+    // 用 preferred name 代替 nickname
+    let preferredNames = config.options.preferredNames;
+    if (preferredNames[meta.client_full]) {
+        if (preferredNames[meta.client_full][msg._from]) {
+            meta.nick = preferredNames[meta.client_full][msg._from];
+        }
+        if (meta.reply_to_id && preferredNames[meta.client_full][meta.reply_to_id]) {
+            meta.reply_nick = preferredNames[meta.client_full][meta.reply_to_id];
+        }
     }
 
     // 处理图片和音频附件
