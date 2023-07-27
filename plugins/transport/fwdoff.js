@@ -36,9 +36,9 @@ module.exports = (bridge, options) => {
         }
 
         if (options.options.rpae.disabled) {
-            return reply(ctx, 'Backwards Forwarding is DISABLED' + changed + '. Whitelisting with ' + options.options.rpae.prepend + ' is REQUIRED.')
+            return reply(ctx, 'TG->QQ Forwarding is DISABLED' + changed + '. Whitelisting with ' + options.options.rpae.prepend + ' is REQUIRED.')
         } else {
-            return reply(ctx, 'Backwards Forwarding is ENABLED' + changed + '. Whitelisting with ' + options.options.rpae.prepend + ' is NOT required.')
+            return reply(ctx, 'TG->QQ Forwarding is ENABLED' + changed + '. Whitelisting with ' + options.options.rpae.prepend + ' is NOT required.')
         }
     }
     
