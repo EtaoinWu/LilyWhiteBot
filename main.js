@@ -15,7 +15,7 @@ const { loadConfig, checkDeprecatedConfig } = require('./lib/util.js');
 const allHandlers = new Map([
     ['IRC', 'IRCMessageHandler'],
     ['Telegram', 'TelegramMessageHandler'],
-    ['QQ', 'QQHttpApiMessageHandler'],
+    ['QQ', 'QQWSApiMessageHandler'],
     ['Discord', 'DiscordMessageHandler']
 ]);
 
@@ -113,10 +113,6 @@ checkDeprecatedConfig(config, 'transport.options.servemedia.coolqCache');
 checkDeprecatedConfig(config, 'transport.options.servemedia.legacy');
 checkDeprecatedConfig(config, 'transport.options.servemedia.webp2png', 'No longer used.');
 checkDeprecatedConfig(config, 'transport.options.servemedia.webpPath', 'No longer used.');
-
-if (config.QQ && !config.QQ.apiRoot && !(config.QQ.bot && config.QQ.bot.apiRoot)) {
-    allHandlers.set('QQ', 'QQOICQMessageHandler');
-}
 
 // 启动各机器人
 let enabledClients = [];

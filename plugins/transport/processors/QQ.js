@@ -12,11 +12,12 @@ const id_cvt = (s) => {
     else return 'q<' + s + '>';
 }
 const my_get_name = (s) => get_name(id_cvt(s));
+const util = require('util')
 
 const pkg = require('../../../package.json');
 const USERAGENT = `LilyWhiteBot/${pkg.version} (${pkg.repository})`;
 
-const truncate = (str, maxLen = 10) => {
+const truncate = (str, maxLen = 15) => {
     str = str.replace(/\n/gu, '');
     if (str.length > maxLen) {
         str = str.substring(0, maxLen - 3) + '...';
@@ -111,7 +112,7 @@ const init = (b, h, c) => {
      * 傳話
      */
     // 將訊息加工好並發送給其他群組
-    qqHandler.on('text', (context) => {
+    qqHandler.on('text', async (context) => {
         const send = () => bridge.send(context).catch(e => winston.error(e.stack));
 
         // // 「應用消息」
@@ -125,6 +126,18 @@ const init = (b, h, c) => {
         let extra = context.extra;
         if (extra.reply) {
             extra.reply.to_id = extra.reply.qq;
+            if (context.extra.ats && context.extra.ats.length > 0) {
+                context.extra.ats = context.extra.ats.filter((id) => id.toString() !== extra.reply.qq.toString())
+            }
+            context.text = context.text.replaceAll(`@${extra.reply.qq} `, '')
+            context.text = context.text.replaceAll(`@${extra.reply.qq}`, '')
+            if (extra.reply.nick.length < 1) {
+                let info = await qqHandler.groupMemberInfo(context.to, extra.reply.qq)
+                if (info.groupCard && info.groupCard.length > 0)
+                    extra.reply.nick = info.groupCard
+                else
+                    extra.reply.nick = info.name
+            }
         }
 
         // 檢查是不是在回覆自己
@@ -173,7 +186,7 @@ const init = (b, h, c) => {
                             }
                         };
                         const searchReg = new RegExp(`\\[CQ:at,qq=${info.qq}\\]|@${info.qq}`, 'gu');
-			const atText = `＠${qqHandler.escape(qqHandler.getNick(user))}`;
+			            const atText = `＠${qqHandler.escape(qqHandler.getNick(user))}`;
                         context.text = context.text.replace(searchReg, atText);
                     }
                 }
@@ -344,11 +357,11 @@ const receive = async (msg) => {
             url = bufferToBase64URI(upload.buffer)
         }
         if (upload.type === 'audio') {
-            output += '\n' + `[CQ:record,file=${url},headers=${headers}]`;
+            output += '\n' + `[CQ:record,file=${url}]`;
         } else if (upload.type === 'image') {
-            output += '\n' + `[CQ:image,file=${url},headers=${headers}]`;
+            output += '\n' + `[CQ:image,file=${url}]`;
         } else if (upload.type === 'video') {
-            output += '\n' + `[CQ:video,file=${url},headers=${headers}]`;
+            output += '\n' + `[CQ:video,file=${url}]`;
         } else {
             output += '\n' + upload.url;
         }
